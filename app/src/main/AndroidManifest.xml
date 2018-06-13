@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.kunj.reminder">
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_reminder"
+        android:launchMode="singleTop"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_reminder"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/ReminderTheme"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".CreateActivity"
+            android:label="Create a Reminder"
+            android:theme="@style/ReminderTheme">
+        </activity>
+
+        <activity
+            android:name=".UpdateActivity"
+            android:label="Update Date"
+            android:theme="@style/ReminderTheme">
+        </activity>
+
+        <provider android:name="com.example.kunj.reminder.data.ReminderProvider"
+            android:authorities="com.example.kunj.reminder"
+            android:enabled="true"
+            android:exported="true" >
+        </provider>
+    </application>
+
+</manifest>

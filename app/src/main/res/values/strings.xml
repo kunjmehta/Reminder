@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Reminder</string>
+    <string name="string_create">+</string>
+    <string name="no_reminders">All caught up!</string>
+    <string name="category_description">Description</string>
+    <string name="hint_description">Enter your description</string>
+    <string name="action_save">Save</string>
+    <string name="unsaved_changes_dialog_msg">Discard your changes and quit?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name ="delete_dialog_msg">Confirm Deletion</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_pet_failed">Deletion Failed</string>
+    <string name="delete_pet_successful">Deletion Successful</string>
+    <string name="insert_pet_failed">Creation Failed</string>
+    <string name="insert_pet_successful">Reminder Created</string>
+    <string name="update_pet_failed">Update Failed</string>
+    <string name="update_pet_successful">Date Updated</string>
+    <string name="main_notification_channel_name">reminderChannel</string>
+    <string name="channel_description">Channel to remind user</string>
+    <string name="reminder_notification_title">Today\'s Task</string>
+</resources>

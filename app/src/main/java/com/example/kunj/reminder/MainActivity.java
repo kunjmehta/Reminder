@@ -1,5 +1,7 @@
 package com.example.kunj.reminder;
 
+import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.LoaderManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -20,6 +22,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,8 +32,15 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.kunj.reminder.data.ReminderContract;
+import com.example.kunj.reminder.data.ReminderDbHelper;
 
 import java.util.Calendar;
+import java.util.Observer;
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -38,32 +48,38 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int REM_LOADER = 0;
     Uri currentRemUri;
 
-    private static int year;
-    private static int month;
-    private static int date;
-    private static String monthString;
-
-    private static final int REMINDER_NOTIFICATION_ID = 1138;
-    private static final int REMINDER_PENDING_INTENT_ID = 3417;
-    private static final String REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel";
-
-    public static final String[] NOTIFICATION_PROJECTION = {
-            ReminderContract.ReminderEntry.COLUMN_DESC,
-    };
+    Intent mServiceIntent;
+    private MyService mMyService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ListView reminderListView = findViewById(R.id.list);
 
+
+
+        /*AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+       Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, 5);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+        ReminderDbHelper.createDatabase();*/
+
+
+        //creating service
+        mMyService = new MyService(getApplicationContext());
+        mServiceIntent = new Intent(getApplicationContext(), mMyService.getClass());
+        if (!isMyServiceRunning(mMyService.getClass())) {
+            startService(mServiceIntent);
+        }
+
+        ListView reminderListView = findViewById(R.id.list);
         View emptyView = findViewById(R.id.empty_view);
         reminderListView.setEmptyView(emptyView);
 
-        // Setup an Adapter to create a list item for each row of pet data in the Cursor.
-        // There is no pet data yet (until the loader finishes) so pass in null for the Cursor.
-
+        // Setup an Adapter to create a list item for each row of reminder  in the Cursor.
         cAdapter = new ReminderCursorAdapter(this, null);
         reminderListView.setAdapter(cAdapter);
 
@@ -72,9 +88,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
-                // Create new intent to go to {@link EditorActivity}
-
+                //Go to UpdateActivity
                 Intent intent = new Intent(MainActivity.this, UpdateActivity.class);
                 currentRemUri = ContentUris.withAppendedId(ReminderContract.ReminderEntry.CONTENT_URI, id);
                 intent.setData(currentRemUri);
@@ -83,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
         getLoaderManager().initLoader(REM_LOADER, null, this);
 
+        //delete reminder
         reminderListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -93,9 +108,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         });
     }
 
+
     private void showDeleteConfirmationDialog() {
-        // Create an AlertDialog.Builder and set the message, and click listeners
-        // for the positive and negative buttons on the dialog.
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.delete_dialog_msg);
 
@@ -113,33 +128,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
 
-        // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
     private void deleteRem() {
-        // Only perform the delete if this is an existing pet.
         if (currentRemUri != null) {
-            // Call the ContentResolver to delete the pet at the given content URI.
-            // Pass in null for the selection and selection args because the mCurrentPetUri
-            // content URI already identifies the pet that we want.
             int rowsDeleted = getContentResolver().delete(currentRemUri, null, null);
 
             // Show a toast message depending on whether or not the delete was successful.
             if (rowsDeleted == 0) {
-                // If no rows were deleted, then there was an error with the delete.
-                Toast.makeText(this, getString(R.string.delete_pet_failed),
+                Toast.makeText(this, getString(R.string.delete_rem_failed),
                         Toast.LENGTH_SHORT).show();
             } else {
                 // Otherwise, the delete was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.delete_pet_successful),
+                Toast.makeText(this, getString(R.string.delete_rem_successful),
                         Toast.LENGTH_SHORT).show();
             }
         }
     }
 
-
+    //main menu
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater = getMenuInflater();
@@ -147,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         return true;
     }
 
+    //Go to Creation
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent = new Intent(MainActivity.this, CreateActivity.class);
@@ -157,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        // Define a projection that specifies the columns from the table we care about.
+
         String[] projection = {
                 ReminderContract.ReminderEntry._ID,
                 ReminderContract.ReminderEntry.COLUMN_DESC,
@@ -166,12 +176,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 ReminderContract.ReminderEntry.COLUMN_YEAR};
 
         // This loader will execute the ContentProvider's query method on a background thread
-        return new CursorLoader(this,   // Parent activity context
-                ReminderContract.ReminderEntry.CONTENT_URI,   // Provider content URI to query
-                projection,             // Columns to include in the resulting Cursor
-                null,                   // No selection clause
-                null,                   // No selection arguments
-                null);                  // Default sort order
+        return new CursorLoader(this,
+                ReminderContract.ReminderEntry.CONTENT_URI,
+                projection,
+                null,
+                null,
+                null);
     }
 
 
@@ -184,4 +194,24 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<Cursor> loader) {
         cAdapter.swapCursor(null);
     }
+
+    @Override
+    protected void onDestroy() {
+        stopService(mServiceIntent);
+        Log.i("MAINACT", "onDestroy!");
+        super.onDestroy();
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i ("isMyServiceRunning?", true+"");
+                return true;
+            }
+        }
+        Log.i ("isMyServiceRunning?", false+"");
+        return false;
+    }
+
 }

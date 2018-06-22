@@ -74,17 +74,14 @@ public class UpdateActivity extends AppCompatActivity{
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        // User clicked "Discard" button, close the current activity.
                         finish();
                     }
                 };
 
-        // Show dialog that there are unsaved changes
         showUnsavedChangesDialog(discardButtonClickListener);
     }
 
     private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
-        // Create an AlertDialog.Builder and set the message, and click listeners
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(R.string.unsaved_changes_dialog_msg);
@@ -98,7 +95,6 @@ public class UpdateActivity extends AppCompatActivity{
             }
         });
 
-        // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
@@ -152,30 +148,21 @@ public class UpdateActivity extends AppCompatActivity{
 
         String year = Integer.toString(dPicker.getYear());
 
-        // Create a ContentValues object where column names are the keys,
-        // and pet attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(ReminderContract.ReminderEntry.COLUMN_DATE, date);
         values.put(ReminderContract.ReminderEntry.COLUMN_MONTH, monthString);
         values.put(ReminderContract.ReminderEntry.COLUMN_YEAR, year);
 
 
-        // Determine if this is a new or existing pet by checking if mCurrentPetUri is null or not
         if (currentRemUri != null) {
-            // Otherwise this is an EXISTING pet, so update the pet with content URI: mCurrentPetUri
-            // and pass in the new ContentValues. Pass in null for the selection and selection args
-            // because mCurrentPetUri will already identify the correct row in the database that
-            // we want to modify.
             int rowsAffected = getContentResolver().update(currentRemUri, values, null, null);
 
-            // Show a toast message depending on whether or not the update was successful.
             if (rowsAffected == 0) {
-                // If no rows were affected, then there was an error with the update.
-                Toast.makeText(this, getString(R.string.update_pet_failed),
+                Toast.makeText(this, getString(R.string.update_rem_failed),
                         Toast.LENGTH_SHORT).show();
             } else {
                 // Otherwise, the update was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.update_pet_successful),
+                Toast.makeText(this, getString(R.string.update_rem_successful),
                         Toast.LENGTH_SHORT).show();
             }
         }

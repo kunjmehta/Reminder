@@ -68,8 +68,7 @@ public class CreateActivity extends AppCompatActivity {
     }
 
     private void saveRem() {
-        // Read from input fields
-        // Use trim to eliminate leading or trailing white space
+
         description = findViewById(R.id.enter_description);
         dPicker = findViewById(R.id.create_picker);
         String desc = description.getText().toString().trim();
@@ -95,14 +94,10 @@ public class CreateActivity extends AppCompatActivity {
 
         String year = Integer.toString(dPicker.getYear());
 
-        // Check if this is supposed to be a new pet
-        // and check if all the fields in the editor are blank
         if (currentRemUri == null && TextUtils.isEmpty(desc) && TextUtils.isEmpty(monthString) && TextUtils.isEmpty(date) && TextUtils.isEmpty(year)) {
             return;
         }
 
-        // Create a ContentValues object where column names are the keys,
-        // and pet attributes from the editor are the values.
         ContentValues values = new ContentValues();
         values.put(ReminderContract.ReminderEntry.COLUMN_DESC, desc);
         values.put(ReminderContract.ReminderEntry.COLUMN_DATE, date);
@@ -110,20 +105,14 @@ public class CreateActivity extends AppCompatActivity {
         values.put(ReminderContract.ReminderEntry.COLUMN_YEAR, year);
 
 
-        // Determine if this is a new or existing pet by checking if mCurrentPetUri is null or not
         if (currentRemUri == null) {
-            // This is a NEW pet, so insert a new pet into the provider,
-            // returning the content URI for the new pet.
             Uri newUri = getContentResolver().insert(ReminderContract.ReminderEntry.CONTENT_URI, values);
 
-            // Show a toast message depending on whether or not the insertion was successful.
             if (newUri == null) {
-                // If the new content URI is null, then there was an error with insertion.
-                Toast.makeText(this, getString(R.string.insert_pet_failed),
+                Toast.makeText(this, getString(R.string.insert_rem_failed),
                         Toast.LENGTH_SHORT).show();
             } else {
-                // Otherwise, the insertion was successful and we can display a toast.
-                Toast.makeText(this, getString(R.string.insert_pet_successful),
+                Toast.makeText(this, getString(R.string.insert_rem_successful),
                         Toast.LENGTH_SHORT).show();
             }
         }

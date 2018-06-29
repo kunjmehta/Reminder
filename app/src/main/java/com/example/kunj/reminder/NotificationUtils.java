@@ -24,7 +24,7 @@ public class NotificationUtils {
     private static final String REMINDER_NOTIFICATION_CHANNEL_ID = "reminder_notification_channel";
 
 
-    public static void giveNotification(Context context) {
+    public static void giveNotification(Context context, String text) {
         NotificationManager notificationManager = (NotificationManager)
                 context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -37,10 +37,10 @@ public class NotificationUtils {
         }
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, REMINDER_NOTIFICATION_CHANNEL_ID)
                 .setColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                .setSmallIcon(R.mipmap.ic_reminder)
+                .setSmallIcon(R.drawable.notif_reminder)
                 .setContentTitle(context.getString(R.string.reminder_notification_title))
-                .setContentText("HI")
-                .setStyle(new NotificationCompat.BigTextStyle().bigText("HI"))
+                .setContentText(text)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
                 .setDefaults(Notification.DEFAULT_SOUND)
                 .setContentIntent(contentIntent(context))
                 .setAutoCancel(true);
@@ -60,4 +60,6 @@ public class NotificationUtils {
                 startActivityIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
+
+
 }

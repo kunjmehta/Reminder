@@ -26,40 +26,7 @@ public class ReminderDbHelper  extends SQLiteOpenHelper{
 
     public ReminderDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        /*if(Build.VERSION.SDK_INT >=17)
-            DB_PATH =   context.getApplicationInfo().dataDir+"/databases/";
-        else
-            DB_PATH = "/data/data/"+context.getPackageName()+"/databases/";
-        mcontext = context;*/
     }
-
-   /* @Override
-    public synchronized void close() {
-        if(database !=null)
-            database.close();
-        super.close();
-    }
-
-    private static boolean checkDatabase(){
-        SQLiteDatabase tempDB = null;
-        try{
-            String path = DB_PATH+DATABASE_NAME;
-            tempDB = SQLiteDatabase.openDatabase(path,null,SQLiteDatabase.OPEN_READONLY);
-        }
-        catch (Exception e){}
-        if(tempDB != null)
-            tempDB.close();
-        return tempDB !=null?true:false;
-    }
-
-    public static void createDatabase(){
-        boolean isExist = checkDatabase();
-        if(isExist){
-            Log.d("Heya", "createDatabase: Database present ");
-        }
-        else
-            Log.d("Heya", "createDatabase: Database not created ");
-    }*/
 
     @Override
     public void onCreate(SQLiteDatabase db) {

@@ -19,5 +19,5 @@
     <string name="update_rem_successful">Date Updated</string>
     <string name="main_notification_channel_name">reminderChannel</string>
     <string name="channel_description">Channel to remind user</string>
-    <string name="reminder_notification_title">Today\'s Task</string>
+    <string name="reminder_notification_title">Reminders</string>
 </resources>

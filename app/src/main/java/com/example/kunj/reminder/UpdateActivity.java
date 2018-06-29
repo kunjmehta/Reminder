@@ -161,7 +161,6 @@ public class UpdateActivity extends AppCompatActivity{
                 Toast.makeText(this, getString(R.string.update_rem_failed),
                         Toast.LENGTH_SHORT).show();
             } else {
-                // Otherwise, the update was successful and we can display a toast.
                 Toast.makeText(this, getString(R.string.update_rem_successful),
                         Toast.LENGTH_SHORT).show();
             }

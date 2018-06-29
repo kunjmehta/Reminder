@@ -13,6 +13,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.kunj.reminder.NotificationUtils;
+import com.example.kunj.reminder.R;
+import com.example.kunj.reminder.ReminderApplication;
+
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Path;
@@ -31,8 +35,8 @@ public class ReminderProvider extends ContentProvider {
     String DB_FULL_PATH;
 
 
-     //URI matcher code for the content URI for the reminder table
-    private static final int REM = 100;
+    //URI matcher code for the content URI for the reminder table
+    public static final int REM = 100;
 
 
     //URI matcher code for the content URI for a single reminder
@@ -51,69 +55,34 @@ public class ReminderProvider extends ContentProvider {
         return true;
     }
 
-    /*public Cursor queryAll(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        checkDataBase();
-        if (isDatabasePresent) {
-
-            SQLiteDatabase database = databaseHelper.getReadableDatabase();
-            Cursor cursor;
-            int match = sUriMatcher.match(uri);
-            switch (match) {
-                case REM:
-                    cursor = database.query(ReminderContract.ReminderEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Cannot query unknown URI " + uri);
-            }
-            cursor.setNotificationUri(getContext().getContentResolver(), uri);
-
-            return cursor;
-        }
-        return null;
-    }
-
-    private boolean checkDataBase() {
-        SQLiteDatabase checkDB = null;
-        Context ctx = getContext();
-        File dbpath = ctx.getDatabasePath("reminder.db");
-        try {
-            checkDB = SQLiteDatabase.openDatabase("reminder.db", null,
-                    SQLiteDatabase.OPEN_READONLY);
-            checkDB.close();
-        } catch (SQLiteException e) {
-        }
-        return true;
-    }*/
-
-
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
         SQLiteDatabase database;
-            database = databaseHelper.getReadableDatabase();
-            Cursor cursor;
+        database = databaseHelper.getReadableDatabase();
+        Cursor cursor;
 
-            int match = sUriMatcher.match(uri);
-            switch (match) {
-                case REM:
-                    cursor = database.query(ReminderContract.ReminderEntry.TABLE_NAME, projection, selection, selectionArgs,
-                            null, null, sortOrder);
-                    break;
+        int match = sUriMatcher.match(uri);
+        switch (match) {
+            case REM:
+                cursor = database.query(ReminderContract.ReminderEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
 
-                    case REM_ID:
-                    selection = ReminderContract.ReminderEntry._ID + "=?";
-                    selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                        cursor = database.query(ReminderContract.ReminderEntry.TABLE_NAME, projection, selection, selectionArgs,
-                            null, null, sortOrder);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Cannot query unknown URI " + uri);
-            }
+            case REM_ID:
+                selection = ReminderContract.ReminderEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                cursor = database.query(ReminderContract.ReminderEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            default:
+                throw new IllegalArgumentException("Cannot query unknown URI " + uri);
+        }
 
-            // Set notification URI on the Cursor so we know what content URI the Cursor was created for. If the data at this URI changes, then we know we need to update the Cursor.
-            cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        // Set notification URI on the Cursor so we know what content URI the Cursor was created for. If the data at this URI changes, then we know we need to update the Cursor.
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
-            return cursor;
+        return cursor;
     }
 
     @Override

@@ -50,7 +50,7 @@
             android:enabled="true"
             android:exported="true"
             android:label="RestartServiceWhenStopped">
-            <intent-filter android:priority="100">
+            <intent-filter>
                 <action android:name="sgsgag"/>
             </intent-filter>
         </receiver>

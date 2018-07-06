@@ -24,16 +24,18 @@ import androidx.work.WorkManager;
  * Created by Kunj on 6/22/2018.
  */
 
-//TODO notify about reminders specifically instead of just saying incomplete tasks
+//TODO swipe for task completed
     //TODO preferences about alarms
 
 public class MyService extends Service {
 
-    public static int count = 0;
+    //public static int count = 0;
     //public static String descNotif[] = new String[50];
+    public static int SERVICE_ID = 100;
 
 
-        public MyService(Context applicationContext) {
+
+    public MyService(Context applicationContext) {
             super();
             Log.i("MyService Constructor", "here I am!");
         }
@@ -45,6 +47,7 @@ public class MyService extends Service {
         public int onStartCommand(Intent intent, int flags, int startId) {
             super.onStartCommand(intent, flags, startId);
 
+            int count=0;
             String description;
             Cursor cursor;
             ReminderDbHelper dbHelper = new ReminderDbHelper(getApplicationContext());
@@ -117,26 +120,29 @@ public class MyService extends Service {
                     }
                     if (cal.get(Calendar.DATE) == date && cal.get(Calendar.MONTH) == monthint && cal.get(Calendar.YEAR) == year) {
 
-                        //NotificationUtils.giveNotification(getApplicationContext(), description);
-                        Log.d("MyService start", "OnStartCommand:description ");
+                        NotificationUtils.giveNotification(getApplicationContext(), description);
+                        //Log.d("MyService start", "OnStartCommand:description ");
                         //descNotif[count] = description;
                         count++;
                         continue;
                     }
                 }
             if(count == 0) {
-                //NotificationUtils.giveNotification(getApplicationContext(), "All caught up!");
+                NotificationUtils.giveNotification(getApplicationContext(), "All caught up!");
                 Log.d("MyService start", "OnStartCommand:All caught up");//catch(Exception e){Log.d("Heya","Null cursor");}
+            }
+            else{
+                NotificationUtils.giveNotification(getApplicationContext(), "There are "+ count+ " incomplete tasks for today");
             }
 
 
-        PeriodicWorkRequest.Builder ReminderBuilder =
-                    new PeriodicWorkRequest.Builder(DatabaseWorker.class, 8,
-                            TimeUnit.HOURS);
+        /*PeriodicWorkRequest.Builder ReminderBuilder =
+                    new PeriodicWorkRequest.Builder(DatabaseWorker.class, 1,
+                            TimeUnit.MINUTES);
             PeriodicWorkRequest ReminderWork = ReminderBuilder.build();
             WorkManager.getInstance().enqueue(ReminderWork);
 
-            // NotificationUtils.giveNotification(getApplicationContext());
+            // NotificationUtils.giveNotification(getApplicationContext());*/
             return START_STICKY;
         }
 

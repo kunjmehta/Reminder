@@ -48,32 +48,38 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int REM_LOADER = 0;
     Uri currentRemUri;
 
-    Intent mServiceIntent;
-    private MyService mMyService;
+    Intent serviceIntent;
+    //Intent mServiceIntent;
+    //private MyService mMyService;
+    int SERVICE_ID = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Calendar now = Calendar.getInstance();
+        Calendar alarmStartTime = Calendar.getInstance();
+        alarmStartTime.set(Calendar.HOUR_OF_DAY,8);
+        alarmStartTime.set(Calendar.MINUTE,0);
+        alarmStartTime.set(Calendar.SECOND,0);
+        alarmStartTime.set(Calendar.MILLISECOND,0);
 
+        if (now.after(alarmStartTime)) {
+            alarmStartTime.add(Calendar.DATE, 1);
+        }
 
-
-        /*AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-       Intent notificationIntent = new Intent(this, AlarmReceiver.class);
-        PendingIntent broadcast = PendingIntent.getBroadcast(this, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND, 5);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
-        ReminderDbHelper.createDatabase();*/
-
+        AlarmManager am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        serviceIntent = new Intent(getApplicationContext(), MyBroadcastReceiver.class);
+        PendingIntent servicePendingIntent = PendingIntent.getBroadcast(getApplicationContext(), MyService.SERVICE_ID,serviceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, alarmStartTime.getTimeInMillis(),AlarmManager.INTERVAL_DAY, servicePendingIntent);
 
         //creating service
-        mMyService = new MyService(getApplicationContext());
+        /*&mMyService = new MyService(getApplicationContext());
         mServiceIntent = new Intent(getApplicationContext(), mMyService.getClass());
         if (!isMyServiceRunning(mMyService.getClass())) {
             startService(mServiceIntent);
-        }
+        }*/
 
         ListView reminderListView = findViewById(R.id.list);
         View emptyView = findViewById(R.id.empty_view);
@@ -197,12 +203,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     protected void onDestroy() {
-        stopService(mServiceIntent);
+        stopService(serviceIntent);
         Log.i("MAINACT", "onDestroy!");
         super.onDestroy();
     }
 
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
+    /*private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
@@ -212,6 +218,5 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }
         Log.i ("isMyServiceRunning?", false+"");
         return false;
-    }
-
+    }*/
 }

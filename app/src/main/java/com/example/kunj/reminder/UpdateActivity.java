@@ -1,5 +1,6 @@
 package com.example.kunj.reminder;
 
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -23,11 +24,14 @@ import android.widget.Toast;
 
 import com.example.kunj.reminder.data.ReminderContract;
 
+import java.util.Calendar;
+
 public class UpdateActivity extends AppCompatActivity{
 
     private boolean remHasChanged = false;
     private DatePicker dPicker;
     private Uri currentRemUri;
+    private EditText description;
 
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
@@ -45,8 +49,16 @@ public class UpdateActivity extends AppCompatActivity{
         Intent intent = getIntent();
         currentRemUri = intent.getData();
 
+        Bundle remDescriptionSelectedBundle = intent.getExtras();
+        String remDescriptionString = remDescriptionSelectedBundle.get("Description").toString();
+
         DatePicker dPicker = findViewById(R.id.update_picker);
         dPicker.setOnTouchListener(touchListener);
+
+        description = findViewById(R.id.update_description);
+        description.setOnTouchListener(touchListener);
+
+        description.setText(remDescriptionString);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,8 +70,49 @@ public class UpdateActivity extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        saveRem();
-        finish();
+        EditText description = findViewById(R.id.update_description);
+        String desc = description.getText().toString();
+
+        dPicker = findViewById(R.id.update_picker);
+        Calendar cal = Calendar.getInstance();
+
+        if(dPicker.getYear() < cal.get(Calendar.YEAR))
+            Toast.makeText(UpdateActivity.this, R.string.incorrect_date_toast, Toast.LENGTH_LONG).show();
+        else if(dPicker.getYear() == cal.get(Calendar.YEAR)) {
+            if (dPicker.getMonth() < cal.get(Calendar.MONTH))
+                Toast.makeText(UpdateActivity.this, R.string.incorrect_date_toast, Toast.LENGTH_LONG).show();
+            else if (dPicker.getMonth() == cal.get(Calendar.MONTH)) {
+                if (dPicker.getDayOfMonth() < cal.get(Calendar.DAY_OF_MONTH))
+                    Toast.makeText(UpdateActivity.this, R.string.incorrect_date_toast, Toast.LENGTH_LONG).show();
+                else if((dPicker.getDayOfMonth() >= cal.get(Calendar.DAY_OF_MONTH))){
+                    if(desc.matches("")){
+                        Toast.makeText(UpdateActivity.this, R.string.empty_reminder_toast, Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        saveRem();
+                        finish();
+                    }
+                }
+            }
+            else if (dPicker.getMonth() > cal.get(Calendar.MONTH)) {
+                if(desc.matches("")){
+                    Toast.makeText(UpdateActivity.this, R.string.empty_reminder_toast, Toast.LENGTH_LONG).show();
+                }
+                else {
+                    saveRem();
+                    finish();
+                }
+            }
+        }
+        else if(dPicker.getYear() > cal.get(Calendar.YEAR)){
+            if(desc.matches("")){
+                Toast.makeText(UpdateActivity.this, R.string.empty_reminder_toast, Toast.LENGTH_LONG).show();
+            }
+            else {
+                saveRem();
+                finish();
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -101,6 +154,8 @@ public class UpdateActivity extends AppCompatActivity{
 
     private void saveRem() {
 
+        EditText description = findViewById(R.id.update_description);
+        String desc = description.getText().toString().trim();
         dPicker = findViewById(R.id.update_picker);
         String date = Integer.toString(dPicker.getDayOfMonth());
 
@@ -149,6 +204,7 @@ public class UpdateActivity extends AppCompatActivity{
         String year = Integer.toString(dPicker.getYear());
 
         ContentValues values = new ContentValues();
+        values.put(ReminderContract.ReminderEntry.COLUMN_DESC, desc);
         values.put(ReminderContract.ReminderEntry.COLUMN_DATE, date);
         values.put(ReminderContract.ReminderEntry.COLUMN_MONTH, monthString);
         values.put(ReminderContract.ReminderEntry.COLUMN_YEAR, year);

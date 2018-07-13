@@ -19,6 +19,8 @@ import android.widget.Toast;
 
 import com.example.kunj.reminder.data.ReminderContract;
 
+import java.util.Calendar;
+
 public class CreateActivity extends AppCompatActivity {
 
     private Uri currentRemUri;
@@ -62,8 +64,49 @@ public class CreateActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        saveRem();
-        finish();
+        description = findViewById(R.id.enter_description);
+        String desc = description.getText().toString();
+
+        dPicker = findViewById(R.id.create_picker);
+        Calendar cal = Calendar.getInstance();
+
+        if(dPicker.getYear() < cal.get(Calendar.YEAR))
+            Toast.makeText(CreateActivity.this, R.string.incorrect_date_toast, Toast.LENGTH_LONG).show();
+        else if(dPicker.getYear() == cal.get(Calendar.YEAR)) {
+            if (dPicker.getMonth() < cal.get(Calendar.MONTH))
+                Toast.makeText(CreateActivity.this, R.string.incorrect_date_toast, Toast.LENGTH_LONG).show();
+            else if (dPicker.getMonth() == cal.get(Calendar.MONTH)) {
+                if (dPicker.getDayOfMonth() < cal.get(Calendar.DAY_OF_MONTH))
+                    Toast.makeText(CreateActivity.this, R.string.incorrect_date_toast, Toast.LENGTH_LONG).show();
+                else if((dPicker.getDayOfMonth() >= cal.get(Calendar.DAY_OF_MONTH))){
+                    if(desc.matches("")){
+                        Toast.makeText(CreateActivity.this, R.string.empty_reminder_toast, Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        saveRem();
+                        finish();
+                    }
+                }
+            }
+            else if (dPicker.getMonth() > cal.get(Calendar.MONTH)) {
+                if(desc.matches("")){
+                    Toast.makeText(CreateActivity.this, R.string.empty_reminder_toast, Toast.LENGTH_LONG).show();
+                }
+                else {
+                    saveRem();
+                    finish();
+                }
+            }
+        }
+        else if(dPicker.getYear() > cal.get(Calendar.YEAR)){
+            if(desc.matches("")){
+                Toast.makeText(CreateActivity.this, R.string.empty_reminder_toast, Toast.LENGTH_LONG).show();
+            }
+            else {
+                saveRem();
+                finish();
+            }
+        }
         return super.onOptionsItemSelected(item);
     }
 

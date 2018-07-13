@@ -1,5 +1,6 @@
 package com.example.kunj.reminder;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.LoaderManager;
@@ -29,10 +30,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kunj.reminder.data.ReminderContract;
 import com.example.kunj.reminder.data.ReminderDbHelper;
+import com.wdullaer.swipeactionadapter.SwipeActionAdapter;
+import com.wdullaer.swipeactionadapter.SwipeDirection;
 
 import java.util.Calendar;
 import java.util.Observer;
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     ReminderCursorAdapter cAdapter;
     private static final int REM_LOADER = 0;
     Uri currentRemUri;
+    SwipeActionAdapter swipeAdapter;
 
     Intent serviceIntent;
     //Intent mServiceIntent;
@@ -65,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         alarmStartTime.set(Calendar.SECOND,0);
         alarmStartTime.set(Calendar.MILLISECOND,0);
 
+
         if (now.after(alarmStartTime)) {
             alarmStartTime.add(Calendar.DATE, 1);
         }
@@ -81,13 +87,76 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             startService(mServiceIntent);
         }*/
 
-        ListView reminderListView = findViewById(R.id.list);
+        final ListView reminderListView = findViewById(R.id.list);
         View emptyView = findViewById(R.id.empty_view);
         reminderListView.setEmptyView(emptyView);
 
         // Setup an Adapter to create a list item for each row of reminder  in the Cursor.
         cAdapter = new ReminderCursorAdapter(this, null);
+
+        // Wrap your content in a SwipeActionAdapter
+        //swipeAdapter = new SwipeActionAdapter(cAdapter);
+
+        // Pass a reference of your ListView to the SwipeActionAdapter
+       // swipeAdapter.setListView(reminderListView);
+
+        // Set the SwipeActionAdapter as the Adapter for your ListView
+        //reminderListView.setAdapter(swipeAdapter);
         reminderListView.setAdapter(cAdapter);
+
+        // Set backgrounds for the swipe directions
+//        swipeAdapter.addBackground(SwipeDirection.DIRECTION_FAR_LEFT,R.layout.swipe_left)
+//                .addBackground(SwipeDirection.DIRECTION_NORMAL_LEFT,R.layout.swipe_left)
+//                .addBackground(SwipeDirection.DIRECTION_FAR_RIGHT,R.layout.swipe_right)
+//                .addBackground(SwipeDirection.DIRECTION_NORMAL_RIGHT,R.layout.swipe_right);
+
+//        // Listen to swipes
+//        swipeAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener(){
+//            @Override
+//            public boolean hasActions(int position, SwipeDirection direction){
+//                if(direction.isLeft()) return true; // Change this to false to disable left swipes
+//                if(direction.isRight()) return true;
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean shouldDismiss(int position, SwipeDirection direction){
+//                // Only dismiss an item when swiping normal left
+//                return direction == SwipeDirection.DIRECTION_NORMAL_LEFT;
+//            }
+//
+//            @Override
+//            public void onSwipe(int[] positionList, SwipeDirection[] directionList){
+//                for(int i=0;i<positionList.length;i++) {
+//                    SwipeDirection direction = directionList[i];
+//                    int position = positionList[i];
+//                    String dir = "";
+//
+//                    switch (direction) {
+//                        case DIRECTION_FAR_LEFT:
+//                            dir = "Far left";
+//                            break;
+//                        case DIRECTION_NORMAL_LEFT:
+//                            dir = "Left";
+//                            View view = (View)reminderListView.getItemAtPosition(position);
+//                            //swipeAdapter.getView(position,null, TextView).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+//                            break;
+//                        case DIRECTION_FAR_RIGHT:
+//                            dir = "Far right";
+//                            break;
+//                        case DIRECTION_NORMAL_RIGHT:
+//                            dir = "Right";
+//                            break;
+//                    }
+//                    /*Toast.makeText(
+//                            this,
+//                            dir + " swipe Action triggered on " + swipeAdapter.getItem(position),
+//                            Toast.LENGTH_SHORT
+//                    ).show();*/
+//                    swipeAdapter.notifyDataSetChanged();
+//                }
+//            }
+//        });
 
         // Setup the item click listener
         reminderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -98,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 Intent intent = new Intent(MainActivity.this, UpdateActivity.class);
                 currentRemUri = ContentUris.withAppendedId(ReminderContract.ReminderEntry.CONTENT_URI, id);
                 intent.setData(currentRemUri);
+                String selected = ((TextView)view.findViewById(R.id.reminder_description)).getText().toString();
+                intent.putExtra("Description",selected);
                 startActivity(intent);
             }
         });
@@ -112,6 +183,22 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 return true;
             }
         });
+
+        /*reminderListView.setOnTouchListener(new OnSwipeTouchListener(MainActivity.this) {
+            public void onSwipeTop() {
+                Toast.makeText(MainActivity.this, "top", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeRight() {
+                Toast.makeText(MainActivity.this, "right", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeLeft() {
+                Toast.makeText(MainActivity.this, "left", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeBottom() {
+                Toast.makeText(MainActivity.this, "bottom", Toast.LENGTH_SHORT).show();
+            }
+
+        });*/
     }
 
 

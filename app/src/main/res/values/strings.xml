@@ -16,8 +16,11 @@
     <string name="insert_rem_failed">Creation Failed</string>
     <string name="insert_rem_successful">Reminder Created</string>
     <string name="update_rem_failed">Update Failed</string>
-    <string name="update_rem_successful">Date Updated</string>
+    <string name="update_rem_successful">Reminder Updated</string>
     <string name="main_notification_channel_name">reminderChannel</string>
     <string name="channel_description">Channel to remind user</string>
     <string name="reminder_notification_title">Reminders</string>
+    <string name="empty_reminder_toast">Description field is empty</string>
+    <string name="incorrect_date_toast">Entered date has passed</string>
+
 </resources>

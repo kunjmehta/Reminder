@@ -5,3 +5,8 @@ Features:
 - Delete the tasks once done
 
 Install this app and get reminded every day!
+
+![empty screen](https://github.com/kunjmehta/Reminder/blob/master/empty.PNG)
+![filled screen](https://github.com/kunjmehta/Reminder/blob/master/filled.PNG)
+![create reminder](https://github.com/kunjmehta/Reminder/blob/master/create.PNG)
+![update reminder](https://github.com/kunjmehta/Reminder/blob/master/update.PNG)

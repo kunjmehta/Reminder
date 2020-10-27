@@ -18,6 +18,14 @@
 
 ***
 
+### Tech Stack
+
+* Android
+* Java
+* XML
+
+***
+
 ### Features
 
 - `Add a task`: User can add a task with a title, short description and date to be completed by.

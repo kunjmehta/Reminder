@@ -5,24 +5,16 @@
 
 <h1 align="center">Reminder-Todo List</h1>
 
-<div align="center">
-
-  [![Android Version](https://img.shields.io/badge/android-5.0+-blue.svg)](https://www.android.com/)
-  [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/kunjmehta/alien-shooter/issues)
-  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  [![HitCount](http://hits.dwyl.io/kunjmehta/Reminder.svg)](http://hits.dwyl.io/kunjmehta/Reminder)
-
-  <h5>App that reminds you of your pending tasks everyday.</h5>
-
-</div>
+<h5 align = "center">App that reminds you of your pending tasks everyday.</h5>
 
 -----------------------------------------
-### Inspiration
+### Motivation, Challenge & Accomplishment
 
-* After completing the Android course from Udacity, I wanted to make my own project in Android and if possible, publish it on Google Play Store.
+* **Motivation:** Desire to make my own project in Android and if possible, publish it on Google Play Store after completion of the Udacity Android Nanodegree. This app rose from the need of an application that can do the work of both a 'Reminder' as well as a 'Notes' app, has an intuitive UI and does not need internet.
 
-* This app rose from the need of an application that can do the work of both a 'Reminder' as well as a 'Notes' app, has an intuitive UI and does not need internet.
+* **Challenge:** Being able to translate the guided learning from the course to a real-world high quality application and publishing it on the Play Store.
 
+* **Accomplishment:** Published the application on Play Store and currently has 50+ downloads and good reviews.
 
 ***
 
